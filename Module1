@@ -1,0 +1,87 @@
+Option Explicit
+
+Function WEEK(TheDate As Date) As Integer
+    WEEK = CInt(Format(TheDate, "ww", vbSunday))
+End Function
+
+
+Function QUARTER(TheDate As Date) As Integer
+    Dim TheMonth As Integer
+    TheMonth = Month(TheDate)
+    Select Case TheMonth
+        Case 1, 2, 3
+            QUARTER = 1
+        Case 4, 5, 6
+            QUARTER = 2
+        Case 7, 8, 9
+            QUARTER = 3
+        Case 10, 11, 12
+            QUARTER = 4
+    End Select
+End Function
+
+
+Function DATEDIFF(StartDate As Date, EndDate As Date, DatePart As String) As Integer
+    Dim Days As Integer, Weeks As Integer, Months As Integer, Quarters As Integer, Years As Integer
+    Dim TheDay As Integer, TheWeek As Integer, TheMonth As Integer, TheQuarter As Integer, TheYear As Integer
+    Dim Pointer As Date
+    Dim Sign As Integer
+    
+    If StartDate = EndDate Then
+        DATEDIFF = 0
+    ElseIf StartDate > EndDate Then
+        Pointer = EndDate
+        EndDate = StartDate
+        StartDate = Pointer
+        Sign = -1
+    Else
+        Sign = 1
+    End If
+    
+    Pointer = StartDate
+    TheDay = Day(Pointer)
+    TheWeek = WEEK(Pointer)
+    TheMonth = Month(Pointer)
+    TheQuarter = QUARTER(Pointer)
+    TheYear = Year(Pointer)
+    
+    Days = Weeks = Months = Quarters = Years = 0
+    Do While Pointer < EndDate
+        Pointer = Pointer + 1
+        If Day(Pointer) <> TheDay Then
+            Days = Days + 1
+            TheDay = Day(Pointer)
+        End If
+        If WEEK(Pointer) <> TheWeek Then
+            Weeks = Weeks + 1
+            TheWeek = WEEK(Pointer)
+        End If
+        If Month(Pointer) <> TheMonth Then
+            Months = Months + 1
+            TheMonth = Month(Pointer)
+        End If
+        If QUARTER(Pointer) <> TheQuarter Then
+            Quarters = Quarters + 1
+            TheQuarter = QUARTER(Pointer)
+        End If
+        If Year(Pointer) <> TheYear Then
+            Years = Years + 1
+            TheYear = Year(Pointer)
+        End If
+    Loop
+    
+    DatePart = Left(UCase(DatePart), 1)
+    Select Case DatePart
+        Case "D"
+            DATEDIFF = Days * Sign
+        Case "W"
+            DATEDIFF = Weeks * Sign
+        Case "M"
+            DATEDIFF = Months * Sign
+        Case "Q"
+            DATEDIFF = Quarters * Sign
+        Case "Y"
+            DATEDIFF = Years * Sign
+    End Select
+
+End Function
